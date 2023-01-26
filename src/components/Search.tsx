@@ -15,22 +15,6 @@ export const Search = () => {
           .then(res => res.json())
           .then(quote => saveQuote('0', quote.content, quote.author))
       }, [])
-
-
-    function saveResults(result: Array<Object>) {
-        const newQuoteList: Array<Quote> = []
-        for (let res of result) {
-            console.log(res);
-            const quote: Quote = {
-                id: res._id,
-                content: res.content,
-                author: res.author
-            };
-            newQuoteList.push(quote);
-        }
-        setIsSearch(true);
-        setQuotes(newQuoteList);
-    }
     
     function saveQuote(id: string, content: string, author: string) {
         const quote: Quote = {
@@ -48,7 +32,19 @@ export const Search = () => {
                     e.preventDefault();
                     fetch(`https://usu-quotes-mimic.vercel.app/api/search?query=${query}`)
                         .then(r => r.json())
-                        .then(lst => saveResults(lst.results));
+                        .then(lst => {
+                            const newQuoteList: Array<Quote> = []
+                            for (let res of lst.results) {
+                                const quote: Quote = {
+                                    id: res._id,
+                                    content: res.content,
+                                    author: res.author
+                                };
+                                newQuoteList.push(quote);
+                            }
+                            setIsSearch(true);
+                            setQuotes(newQuoteList);
+                        });
                 }}>
                     <h1>Quote Search</h1>
                     <input
